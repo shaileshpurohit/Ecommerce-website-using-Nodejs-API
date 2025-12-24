@@ -1,3 +1,6 @@
+const { validationResult } = require("express-validator");
+
+const Post = require("../models/post");
 exports.getPosts = (req, res) => {
   res.status(200).json({
     posts: [
@@ -5,30 +8,51 @@ exports.getPosts = (req, res) => {
         id: "1",
         title: "First Post",
         content: "This is the first post",
-        author: "John Doe",
+        imageUrl: "images/iphone.jpeg",
+        creator: { name: "shailesh" },
+        createdAt: new Date(),
       },
       {
         id: "2",
         title: "Second Post",
         content: "This is the second post",
-        author: "Jane Smith",
+        creator: { name: "nilesh" },
+        createdAt: new Date(),
       },
     ],
   });
 };
 
-exports.createPost = (req, res) => {
+exports.createPost = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      message: "Validation failed, entered data is incorrect.",
+      errors: errors.array(),
+    });
+  }
   const title = req.body.title;
   const content = req.body.content;
 
-  // In a real application, you would save the post to the database here
-  res.status(201).json({
-    message: "Post created successfully",
-    post: {
-      id: new Date().toISOString(),
-      title: title,
-      content: content,
-      author: "John Doe",
-    },
+  const post = new Post({
+    title: title,
+    content: content,
+    imageUrl: "images/iphone.jpeg",
+    creator: { name: "shailesh" },
   });
+
+  post
+    .save()
+    .then((result) => {
+      res.status(201).json({
+        message: "Post created successfully",
+        post: result,
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
 };
