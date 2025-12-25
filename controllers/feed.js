@@ -132,7 +132,8 @@ exports.deletePost = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      return Post.findByIdAndRemove(postId);
+      clearImage(post.imageUrl);
+      return Post.findByIdAndDelete(postId);
     })
     .then((result) => {
       res.status(200).json({ message: "Post deleted." });
