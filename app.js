@@ -66,10 +66,15 @@ mongoose
     "mongodb+srv://shailesh:shailesh123@nodejs.klqrrga.mongodb.net/messages?retryWrites=true&w=majority&appName=Nodejs"
   )
   .then((result) => {
-    console.log("Connected to MongoDB");
+    console.log("hello connected");
+    const server = app.listen(3090);
+    console.log("Server is running on port 3090");
+    const io = require("./socket").init(server, {});
+
+    io.on("connection", (socket) => {
+      console.log("Client connected");
+    });
   })
   .catch((err) => {
     console.log(err);
   });
-
-app.listen(3090);
