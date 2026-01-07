@@ -98,9 +98,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://shailesh:shailesh123@nodejs.klqrrga.mongodb.net/messages?retryWrites=true&w=majority&appName=Nodejs"
-  )
+  .connect("<mongodb_connection_string>")
   .then((result) => {
     app.listen(8020);
   })
